@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tovelop.maphant.mapper.LogMapper">
+    <insert id="insertLog">
+        INSERT INTO Log (id,datetime,device,ip,state,user_id)
+        VALUES (#{id},#{datetime},#{device},#{ip},#{state},#{userId})
+    </insert>
+</mapper>
