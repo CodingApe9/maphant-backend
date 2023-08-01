@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tovelop.maphant.mapper.RoomMapper">
+
+    <select id="findRoom" resultType="RoomDto">
+        SELECT *
+        FROM room
+        WHERE sender_id = #{sender_id}
+          AND receiver_id = #{receiver_id}
+    </select>
+
+    <insert id="createRoom" parameterType="CreateRoomDto">
+        INSERT INTO room (last_content, time, sender_id, receiver_id, sender_is_deleted, receiver_is_deleted)
+        VALUES (#{last_content},
+                #{time},
+                #{sender_id},
+                #{receiver_id},
+                #{sender_is_deleted},
+                #{receiver_is_deleted})
+    </insert>
+
+    <update id="updateRoomLastContent">
+        UPDATE room
+        SET last_content = #{content}
+        WHERE id = #{room_id}
+    </update>
+
+    <select id="findRoomById" resultType="RoomDto">
+        SELECT *
+        FROM room
+        WHERE id = #{room_id}
+    </select>
+
+    <select id="findRoomList" resultType="RoomListResultDto">
+        SELECT r1.id,
+               r1.last_content,
+               r1.sender_id,
+               r1.receiver_id,
+               r1.time,
+               r1.sender_is_deleted,
+               r1.receiver_is_deleted,
+               u1.id       AS other_id,
+               u1.nickname AS other_nickname
+        FROM room r1
+                 INNER JOIN user u1 ON r1.receiver_id = u1.id
+        WHERE sender_id = #{user_id}
+          AND sender_is_deleted = false
+        UNION
+        SELECT r1.id,
+               r1.last_content,
+               r1.sender_id,
+               r1.receiver_id,
+               r1.time,
+               r1.sender_is_deleted,
+               r1.receiver_is_deleted,
+               u1.id       AS other_id,
+               u1.nickname AS other_nickname
+        FROM room r1
+                 INNER JOIN user u1
+                            ON r1.sender_id = u1.id
+        WHERE receiver_id = #{user_id}
+          AND receiver_is_deleted = false
+        ORDER BY time DESC
+    </select>
+
+
+    <update id="updateSenderIsDeleted">
+        UPDATE room
+        SET sender_is_deleted = true
+        WHERE id = #{room_id}
+    </update>
+
+    <update id="updateReceiverIsDeleted">
+        UPDATE room
+        SET receiver_is_deleted = true
+        WHERE id = #{room_id}
+    </update>
+
+</mapper>

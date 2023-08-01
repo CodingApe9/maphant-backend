@@ -1,13 +1,12 @@
 package com.tovelop.maphant.dto
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class UploadLogDTO(
-    val number: Int,
     val user_id: Int,
-    val file_size: Long,
-    val upload_date: LocalDate,
+    val file_size: Int,
     val url: String,
+    val upload_date: LocalDateTime,
 )
 
 

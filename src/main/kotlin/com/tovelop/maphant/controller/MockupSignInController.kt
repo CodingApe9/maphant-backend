@@ -2,13 +2,12 @@ package com.tovelop.maphant.controller
 
 import com.tovelop.maphant.configure.MockupCustomUser
 import com.tovelop.maphant.configure.MockupCustomUserToken
+import com.tovelop.maphant.configure.security.token.TokenAuthToken
+import com.tovelop.maphant.dto.UserDataDTO
 import com.tovelop.maphant.type.response.Response
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 data class SignInDto(val email: String, val password: String)
 

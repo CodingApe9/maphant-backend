@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tovelop.maphant.mapper.BoardMapper">
+    <select id="getBoardTypeIdByBoardTypeName" resultType="Int">
+        select id
+        from board_type
+        where name = #{boardTypeName};
+    </select>
+    <select id="getCategoryIdByCategoryName" resultType="Int">
+        select id
+        from category
+        where name = #{categoryName};
+    </select>
+    <insert id="insertBoard">
+        INSERT INTO board(parent_id, category_id, user_id, type_id, title, body, state, is_hide, is_complete, is_anonymous, created_at, modified_at, comment_cnt, like_cnt, report_cnt, images_url)
+        VALUES(#{parentId}, #{categoryId}, #{userId}, #{typeId}, #{title}, #{body}, #{state}, #{isHide}, #{isComplete}, #{isAnonymous}, NOW(), null, #{commentCnt}, #{likeCnt}, #{reportCnt}, #{imagesUrl})
+    </insert>
+    <select id="findBoard" resultType="BoardDTO">
+        select *
+        from board
+        where id = #{boardId}
+    </select>
+    <update id="updateBoard">
+        update board
+        set title = #{title}, body=#{body}, is_hide=#{isHide}, modified_at=NOW()
+        where id = #{boardId}
+    </update>
+    <update id="deleteBoard">
+        update board
+        set state = 1
+        where id = #{boardId}
+    </update>
+    <insert id="insertBoardLike">
+        insert into board_like(board_id, user_id) values (#{boardId}, #{userId})
+    </insert>
+
+    <delete id="deleteBoardLike">
+        delete from board_like
+        where board_id = #{boardId} and user_id = #{userId}
+    </delete>
+    <insert id="insertBoardReport">
+        insert into board_report(board_id, user_id, report_id, reported_at) values (#{boardId}, #{userId}, #{reportId}, now())
+    </insert>
+    <select id="findBoardByKeyword" resultType="BoardDTO">
+        select *
+        from board
+        where lower(title) like lower(CONCAT('%',#{keyword},'%')) or lower(body) like lower(CONCAT('%',#{keyword},'%'))
+    </select>
+    <select id="findBoardList" resultType="PageBoardDTO">
+        select pageBoards.board_id, pageBoards.title, pageBoards.created_at, pageBoards.modified_at, pageBoards.nickname, pageBoards.comment_cnt, pageBoards.like_cnt, pageBoards.is_anonymous, pageBoards.is_hide, board_like.user_id
+        from (select boards.board_id, boards.title, boards.created_at, boards.modified_at, boards.user_id, user.nickname, boards.comment_cnt, boards.like_cnt, boards.is_hide, boards.is_anonymous
+            from (select board.id as board_id, board.title, board.created_at, board.modified_at, board.user_id, board.comment_cnt, board.like_cnt, board.is_hide, board.is_anonymous
+                from (select *
+                    from board
+                    where category_id = #{categoryId} and type_id = #{boardTypeId} and state = 0 and is_hide = 0
+                    order by #{findBoardDTO.sortCriterion}) as board
+                limit #{findBoardDTO.pageSize} offset #{startRow}) as
+                boards join user on boards.user_id = user.id) as
+            pageBoards left outer join board_like on pageBoards.board_id = board_like.board_id and pageBoards.user_id = board_like.user_id
+    </select>
+    <select id="isInCategory" resultType="String">
+        select name
+        from category
+        where id = #{categoryId}
+    </select>
+    <select id="isInBoardtype" resultType="String">
+        select name
+        from board_type
+        where name = #{boardType}
+    </select>
+    <select id="findBoardLike" resultType="BoardLikeDTO">
+        select *
+        from board_like
+        where board_id = #{boardId} and user_id = #{userId}
+    </select>
+    <select id="isInReportByBoardId" resultType="BoardReportDTO">
+        select *
+        from board_report
+        where board_id = #{boardId} and user_id = #{userId}
+    </select>
+    <select id="isInReportId" resultType="String">
+        select name
+        from report
+        where id = #{reportId}
+    </select>
+    <select id="isInBoardByBoardId" resultType="Int">
+        select id
+        from board
+        where id = #{boardId}
+    </select>
+    <insert id="insertBoardQna">
+        insert into board_qna(question_id, answer_id, complete_at)
+        values (#{parentBoardId}, #{childBoardId}, now());
+    </insert>
+    <update id="updateIsCompleteOfBoard">
+        update board
+        set is_complete = #{isComplete}
+        where id = #{boardId};
+    </update>
+</mapper>

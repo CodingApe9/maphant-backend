@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tovelop.maphant.mapper.DmMapper">
+    <insert id="createDm" parameterType="DmDto">
+        INSERT INTO dm (is_from_sender, content, is_read, time, room_id, visible)
+        VALUES (#{is_from_sender},
+                #{content},
+                #{is_read},
+                #{time},
+                #{room_id},
+                #{visible})
+    </insert>
+
+    <select id="findDmList" resultType="ResultDmDto">
+        SELECT id, is_from_sender, IF(is_from_sender == #{isSender}, 1, 0) as is_me, content, time, is_read,
+        room_id,
+        visible
+        FROM dm
+        WHERE room_id = #{room_id}
+        <if test="visible != null and visible.length > 0">
+            AND visible IN
+            <foreach item="item" collection="visible" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="findDmListWithPaging" resultType="ResultDmDto">
+        SELECT id, IF(is_from_sender = #{isSender}, 1, 0) as is_me, content, time, is_read,
+        room_id,
+        visible
+        FROM dm
+        WHERE room_id = #{room_id}
+        <if test="visible != null and visible.length > 0">
+            AND visible IN
+            <foreach item="item" collection="visible" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY time DESC
+        LIMIT #{params.recordSize} OFFSET #{params.offset}
+    </select>
+
+    <update id="updateNotReadDm">
+        UPDATE dm
+        SET is_read = true
+        WHERE room_id = #{room_id}
+          AND is_from_sender = #{is_from_sender}
+          AND is_read = false
+    </update>
+
+    <update id="updateDmVisible">
+        UPDATE dm
+        SET visible = #{newVisible}
+        WHERE room_id = #{room_id}
+          AND visible = #{oldVisible}
+    </update>
+
+    <select id="findDmCount">
+        SELECT COUNT(*)
+        FROM dm
+        WHERE room_id = #{room_id}
+        <if test="visible != null and visible.length > 0">
+            AND visible IN
+            <foreach item="item" collection="visible" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

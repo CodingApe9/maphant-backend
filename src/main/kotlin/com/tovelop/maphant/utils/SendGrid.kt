@@ -4,13 +4,13 @@ import com.sendgrid.*
 import com.sendgrid.helpers.mail.Mail
 import com.sendgrid.helpers.mail.objects.Content
 import com.sendgrid.helpers.mail.objects.Email
-import com.tovelop.maphant.storage.RedisMockup
+import com.tovelop.maphant.service.RedisService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-class SendGrid(@Autowired val redisMockup: RedisMockup) {
+class SendGrid(@Autowired val redisService: RedisService) {
     @Value("\${SEND_GRID_API}")
     val apiKey: String = ""
     val from = Email("admin@ssda.dawoony.com", "과끼리 관리자")
@@ -18,12 +18,23 @@ class SendGrid(@Autowired val redisMockup: RedisMockup) {
     fun sendSignUp(email: String) {
         val token = saveEmailToken(email)
         val to = Email(email)
-        val subject = "과끼리 이메일 인증 코드 발송"
+        val subject = "과끼리 회원가입 인증 코드 발송"
         val content = Content("text/html", "code")
         val mail = Mail(from, subject, to, content)
         mail.setTemplateId("d-cc500a28387545d7a285cc1fd9c70481")
         mail.personalization[0].addDynamicTemplateData("token", token)
         mail.personalization[0].addDynamicTemplateData("email", email)
+        return send(mail)
+    }
+
+    fun sendChangePW(email: String) {
+        val token = saveEmailToken(email)
+        val to = Email(email)
+        val subject = "과끼리 비밀번호 변경 인증 코드 발송"
+        val content = Content("text/html", "code")
+        val mail = Mail(from, subject, to, content)
+        mail.setTemplateId("d-423a177b854d4faca15ab1cec6a137c5")
+        mail.personalization[0].addDynamicTemplateData("token", token)
         return send(mail)
     }
 
@@ -36,36 +47,24 @@ class SendGrid(@Autowired val redisMockup: RedisMockup) {
             request.body = mail.build()
 
             val response: Response = sg.api(request)
-            println(response.statusCode)
-            println(response.body)
-            println(response.headers)
         } catch (e: Exception) {
             throw e
         }
     }
 
     fun saveEmailToken(email: String): String {
-        val random = (0..999999).random().toString().padStart(4, '0')
-        return when (redisMockup.setnx(email, random)) {
-            0 -> {
-                // 이미 인증 토큰이 존재하는 경우
-                redisMockup.get(email).toString()
-            }
+        val random = RandomGenerator.generateRandomNumber(6)
+        val isEmailExist = redisService.get(email) == null
 
-            1 -> {
-                // 저장에 성공 한 경우
-                random
-            }
+        if (isEmailExist)
+            redisService.del(email)
 
-            else -> {
-                // 나머지
-                throw Error("Failed save token")
-            }
-        }
+        redisService.set(email, random)
+        return random
     }
 
     fun confirmEmailToken(email: String, token: String): Boolean {
-        val orgToken = redisMockup.get(email)
+        val orgToken = redisService.get(email)
         return orgToken == token
     }
 }

@@ -9,24 +9,24 @@ data class SignupDTO(
     val passwordCheck: String,
     val nickname: String,
     val name: String,
-    val sNo: String,
-    val phonenum: String,
-    val universityName: String
+    val sno: String,
+    val phNum: String?,
+    val univName: String
 ) {
-    fun toUserDTO(universityId: Int, passwordEncoder: PasswordEncoder): UserDTO {
+    fun toUserDTO(univId: Int, passwordEncoder: PasswordEncoder): UserDTO {
         return UserDTO(
             email = email,
             password = passwordEncoder.encode(password),
             nickname = nickname,
             name = name,
-            phoneInt = phonenum,
-            sNo = sNo,
-            create_at = LocalDate.now(),
+            phNum = null,
+            sno = sno,
+//            createdAt = LocalDate.now(),
             role = "user",
-            state = "0",
-            is_agree = "Y",
-            last_modified_date = LocalDate.now(),
-            university_id = universityId
+            state = 0,
+//            agreedAt = LocalDate.now(),
+//            lastmodifiedAt = LocalDate.now(),
+            univId = univId
         )
     }
 }

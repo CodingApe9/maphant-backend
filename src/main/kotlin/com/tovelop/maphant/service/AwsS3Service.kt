@@ -48,4 +48,22 @@ class AwsS3Service(
         return imageUrls
     }
 
+    fun uploadFile(image: MultipartFile): String {
+        lateinit var imageUrl: String
+        val originalFileName: String? = image.originalFilename
+        if (uploadUtils.isNotImageFile(originalFileName as String))
+            throw IllegalArgumentException("png, jpeg, jpg에 해당하는 파일만 업로드할 수 있습니다.");
+        val objectMetadata = ObjectMetadata()
+        objectMetadata.setContentLength(image.getSize())
+        objectMetadata.setContentType(image.getContentType())
+        try {
+            val inputStream: InputStream = image.inputStream
+            amazonS3Client.putObject(bucket, originalFileName, inputStream, objectMetadata);
+            imageUrl = amazonS3Client.getUrl(bucket, originalFileName).toString();
+        } catch (e: IOException) {
+            e.printStackTrace();
+        }
+        return imageUrl
+    }
+
 }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tovelop.maphant.mapper.PollMapper">
+    <insert id="insertPoll" useGeneratedKeys="true" keyProperty="id" parameterType="com.tovelop.maphant.dto.PollDTO">
+        INSERT INTO poll(id, board_id, title, expire_date, state)
+        VALUES (#{id}, #{boardId}, #{title}, #{expireDateTime}, #{state});
+    </insert>
+    <insert id="insertPollOption">
+        INSERT INTO poll_option(id, poll_id, option_name, option_cnt)
+        VALUES (null, #{pollId}, #{option}, 0);
+    </insert>
+
+    <insert id="insertPollUser">
+        INSERT INTO poll_user(user_id, poll_id, poll_option, created_at)
+        VALUES (#{userId}, #{pollId}, #{pollOption}, now());
+    </insert>
+
+    <update id="updatePollUser">
+        UPDATE poll_user
+        SET poll_option = #{pollOption}
+        WHERE user_id = #{userId}
+          and poll_id = #{pollId};
+    </update>
+
+    <select id="prevOptionId" resultType="int">
+        SELECT poll_option
+        FROM poll_user
+        WHERE user_id = #{userId}
+          and poll_id = #{pollId};
+    </select>
+
+    <update id="decreaseCount">
+        UPDATE poll_option
+        SET option_cnt = option_cnt - 1
+        WHERE id = #{optionId}
+          and poll_id = #{pollId};
+    </update>
+
+    <update id="updateCount">
+        UPDATE poll_option
+        SET option_cnt = option_cnt + 1
+        WHERE id = #{optionId}
+          and poll_id = #{pollId};
+    </update>
+
+    <select id="getPollIdByBoardId" resultType="int">
+        SELECT poll.id
+        FROM poll,
+             board
+        WHERE board_id = board.id
+    </select>
+
+    <select id="selectPollInfoById" resultType="map">
+        SELECT po.option_name, po.option_cnt
+        FROM poll
+                 JOIN poll_option po on poll.id = po.poll_id
+        WHERE poll.id = #{pollId}
+    </select>
+</mapper>

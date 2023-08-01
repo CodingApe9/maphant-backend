@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tovelop.maphant.mapper.ProfileMapper">
+    <select id="findById" resultType="ProfileDto">
+        SELECT user_id, profile_img, body
+        FROM profile
+        WHERE user_id = #{user_id}
+    </select>
+    <select id="findImageById" resultType="ProfileImageDto">
+        SELECT user.nickname as user_name,
+               profile_img
+        FROM user LEFT OUTER JOIN profile
+            ON profile.user_id = user.id
+        WHERE user.id = #{user_id}
+    </select>
+    <select id="findAllPostsById" resultType="BoardResDto">
+        SELECT
+               board.id as id,
+               category_id,
+               user_id,
+               board_type.name as type,
+               title,
+               body,
+               is_hide,
+               is_complete,
+               is_anonymous,
+               created_at,
+               modified_at,
+               comment_cnt,
+               like_cnt,
+               report_cnt,
+               images_url
+        FROM board
+            INNER JOIN board_type ON board.id = board_type.id
+        WHERE user_id = #{userId} AND board.state = 0
+    </select>
+
+    <update id="updateProfileImage">
+        UPDATE profile
+        SET profile_img = #{imageUrl}
+        WHERE user_id = #{userId}
+    </update>
+
+    <insert id="insertProfile">
+        INSERT INTO profile (user_id, profile_img)
+        VALUES (#{userId}, #{imageUrl})
+    </insert>
+
+    <select id="findAllBoardByIdWithPaging" resultType="BoardResDto">
+        SELECT
+            board.id as id,
+            category_id,
+            user_id,
+            board_type.name as type,
+            title,
+            body,
+            is_hide,
+            is_complete,
+            is_anonymous,
+            created_at,
+            modified_at,
+            comment_cnt,
+            like_cnt,
+            report_cnt,
+            images_url
+        FROM board
+                 INNER JOIN board_type ON board.id = board_type.id
+        WHERE user_id = #{userId}
+        ORDER BY created_at
+        LIMIT #{params.recordSize} OFFSET #{params.offset}
+    </select>
+
+    <select id="getBoardCount">
+        SELECT COUNT(*)
+        FROM board
+        WHERE user_id = #{userId}
+    </select>
+
+</mapper>
+

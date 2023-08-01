@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tovelop.maphant.mapper.AdminPageMapper">
+    <select id="findBoardReportByReportedAt" resultType="AdminBoardReportDTO">
+        select board_id boardId, board.title boardTitle, board.body boardBody,
+               board_user.id boardUserId, board_user.email boardUserEmail
+        from (select board_id, user_id, report_id, reported_at, id
+              from board_report
+              order by reported_at
+              limit #{reportSize} offset 0) as reports
+                 join board on reports.board_id = board.id
+                 join user board_user on reports.user_id = board_user.id
+    </select>
+    <select id="findBoardReportByMostReportedRanking" resultType="AdminBoardReportDTO">
+        select board_ids.board_id boardId, board.title boardTitle, board.body boardBody,
+               board_user.id boardUserId, board_user.email boardUserEmail
+        from (select board_id
+            from board_report
+            group by board_id
+            order by count(*) desc
+            limit #{reportSize} offset 0) as board_ids
+            join board on board_id = board.id
+            join user board_user on board.user_id = board_user.id
+    </select>
+    <select id="findBoardReportBySortType" resultType="AdminBoardReportDTO">
+    </select>
+    <select id="findReportInfo" resultType="BoardReportInfoDTO">
+        select report_id reportId, reporter_user.id reporterUserId, reporter_user.email reporterUserEmail,
+               reported_at boardReportedAt, report.name boardReportName
+        from (select board_id, user_id, report_id, reported_at, id
+            from board_report
+            where board_id = #{boardId}) as reports
+            join user reporter_user on reports.user_id = reporter_user.id
+            join report on reports.report_id = report.id;
+    </select>
+<!--    <update id="setBoardReport">-->
+<!--        update board-->
+<!--        set state = 2-->
+<!--        where id in (select board_id-->
+<!--                     from board_report-->
+<!--                     where board_id in #{boardId})-->
+<!--    </update>-->
+<!--    <update id="setUserSanction">-->
+<!--        insert into user_report(user_id, deadline_at, sanction_reason)-->
+<!--        values (#{userId}, #{deadlineAt}, #{sanctionReason});-->
+<!--        update user-->
+<!--        set state = 2-->
+<!--        where id in-->
+<!--    </update>-->
+<!--    <select id="findUserSanction">-->
+<!--        select *-->
+<!--        from user,-->
+<!--             user_report-->
+<!--    </select>-->
+</mapper>

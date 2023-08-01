@@ -5,15 +5,15 @@
 <mapper namespace="com.tovelop.maphant.mapper.UploadLogMapper">
     <select id="readUploadLog" resultType="UploadLogDTO">
         SELECT *
-        FROM UploadLog
+        FROM log_upload
     </select>
     <insert id="insertUploadLog">
-        INSERT INTO UploadLog (number, user_id, file_size, upload_date, url)
-        VALUES (#{number}, #{user_id}, #{file_size}, #{upload_date}, #{url})
+        INSERT INTO log_upload (user_id, file_size, upload_date, url)
+        VALUES (#{user_id}, #{file_size}, #{upload_date}, #{url})
     </insert>
     <select id="readUploadLogByUserId" resultType="UploadLogDTO">
         SELECT *
-        FROM UploadLog
+        FROM log_upload
         WHERE user_id = #{user_id}
     </select>
 </mapper>

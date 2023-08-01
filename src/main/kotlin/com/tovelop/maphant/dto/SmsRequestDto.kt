@@ -7,5 +7,5 @@ data class SmsRequestDto(
     val countryCode: String,
     val from: String,
     val content: String,
-    val messages: List<MessageDto>,
+    val messages: List<SmsMessageReqDto>,
 )

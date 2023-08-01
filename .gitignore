@@ -38,3 +38,6 @@ out/
 
 ### property files ###
 application-*.properties
+
+### Key Files ###
+src/main/resources/firebase/serviceAccountKey.json
