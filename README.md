@@ -7,3 +7,8 @@
 
 ## 기술 스택
 - kotlin + spring + mybatis + mysql
+
+## 담당 부분
+- 회원가입 Controller
+- 게시판 Service 및 sql(mybatis xml)
+- 유저 관리 통계 페이지 (thymeleaf)
