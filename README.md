@@ -10,5 +10,5 @@
 
 ## 담당 부분
 - 회원가입 Controller
-- 게시판 Service 및 sql(mybatis xml)
+- 게시판 Service, Repository sql(mybatis xml)
 - 유저 관리 통계 페이지 (thymeleaf)
