@@ -3,12 +3,17 @@
 기획기간 : 2023.5.31 ~ 2023.6.30 (31일)  
 개발기간 : 2023.7.3 ~ 2023.8.24 (53일)
 
+---
+
 ## 데이터 수집 (전처리)
 대학교 이름 및 도메인
 - 대학생의 학교 인증 및 이메일 인증을 위하여 학교 이름과 도메인을 수집함
 - 수집 방법 : 공공데이터포털에서 학교명과 도메인 수집
 - 처리 방법 : 데이터 수집 후 정규식을 이용하여 데이터 정규화 및 ID 부여 실시
-- 최종 저장 : Database 전용 table을 두어 저장함    
+- 최종 저장 : Database 전용 table을 두어 저장함
+
+---
+
 ## 팀원  
 [이석민](https://blog.esukmean.com)
 ### 백엔드  
@@ -54,8 +59,9 @@
 ![eslint](https://img.shields.io/badge/eslint-3A33D1?style=for-the-badge&logo=eslint&logoColor=white)
 ![prettier](https://img.shields.io/badge/prettier-1A2C34?style=for-the-badge&logo=prettier&logoColor=F7BA3E)
 
+---
+
 ## 아키텍처
-<hr> 
 
 ![Group 6](https://github.com/jmlee119/maphant-app/assets/68285285/b3d9406b-9b7e-4773-9570-5d491b4de178)
 
@@ -67,6 +73,8 @@
 
 ### 웹 
 ![photo_2024-02-26 23 14 28](https://github.com/jmlee119/maphant-app/assets/68285285/679a5cd7-f1f5-4112-8162-f10e3c68a086)
+
+---
 
 ## 기능설명
 ![KakaoTalk_Photo_2024-02-24-21-42-07 017](https://github.com/jmlee119/maphant-app/assets/68285285/55a8993e-c8c3-41af-ab02-e239f633a5a0)  
@@ -98,6 +106,8 @@
 <img width="637" alt="image" src="https://github.com/jmlee119/maphant-app/assets/68285285/b1793de5-6397-4b31-87bc-55bf5dee522b">
 
 채팅 기능과 마이페이지 기능입니다.
+
+---
 
 ## 담당 기능
 - 회원가입 Controller
